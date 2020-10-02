@@ -1,8 +1,17 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const Joi = require('joi');
 const app = express();
 const genres = require('./routes/genres');
 const home = require('./routes/home');
+mongoose.connect("mongodb://localhost/Vidly",{useUnifiedTopology:true,
+useUnifiedTopology:true , useNewUrlParser: true})
+.then(()=>{
+    console.log("the project connect to the database....");
+})
+.catch(()=>{
+    console.log("connection is failed....");
+})
 app.use(express.json());
 app.use('/api/genres',genres);
 app.use('/',home);

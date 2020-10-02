@@ -1,23 +1,40 @@
 
-
+const mongoose = require('mongoose');
 const express = require('express');
 const Joi = require('joi');
 const router = express.Router();
-const genres = [
-    { id: 1, name: "action" },
-    { id: 2, name: "horor" },
-    { id: 3, name: "sci-fi" },
-    { id: 4, name: "comedy" },
-    { id: 5, name: "thriller" },
-    { id: 6, name: "love story" },
-    { id: 7, name: "cartoon" },
 
 
-]
+const Genre = mongoose.model("Genre", mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        minLength: 5,
+        maxLength: 25
+    }
+}));
 
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+    const genres = await Genre.find().sort({ name: 1 });
     res.send(genres);
+});
+
+router.post('/', async (req, res) => {
+    const schema = Joi.object().keys({
+        name: Joi.string().min(3).max(12).required()
+    });
+    const validation = schema.validate(req.body);
+
+    if (validation.error) {
+        res.status(400).send(validation.error.details[0].message);
+        return;
+    }
+    let genre = new Genre({
+        name: req.body.name
+    })
+    genre = await genre.save();
+    res.send(result);
 });
 
 router.get('/:id', (req, res) => {
@@ -30,27 +47,7 @@ router.get('/:id', (req, res) => {
         res.send(genre);
     }
 });
-router.post('/', (req, res) => {
-
-    const genre = {
-        id: genres.length + 1,
-        name: req.body.name
-    };
-    const schema = Joi.object().keys({
-        name: Joi.string().min(3).max(12).required()
-    });
-    const validation = schema.validate(req.body);
-
-    if (validation.error) {
-        res.status(400).send(validation.error.details[0].message);
-        return;
-    }
-    genres.push(genre);
-    res.send(genre);
-});
-
-
-router.put('/:id' , (req,res)=>{
+router.put('/:id', (req, res) => {
     const genre = genres.find(movie => {
         return movie.id === parseInt(req.params.id);
     });
@@ -75,7 +72,7 @@ router.put('/:id' , (req,res)=>{
 });
 
 
-router.delete('/:id',(req,res)=>{
+router.delete('/:id', (req, res) => {
     const genre = genres.find(movie => {
         return movie.id === parseInt(req.params.id);
     });
@@ -84,7 +81,7 @@ router.delete('/:id',(req,res)=>{
         return;
     }
     const index = genres.indexOf(genre);
-    genres.splice(index,1);
+    genres.splice(index, 1);
     res.send(genre);
 
 });

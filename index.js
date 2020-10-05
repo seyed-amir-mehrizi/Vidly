@@ -12,6 +12,7 @@ useUnifiedTopology:true , useNewUrlParser: true})
 .catch(()=>{
     console.log("connection is failed....");
 })
+mongoose.set('useFindAndModify', false);
 app.use(express.json());
 app.use('/api/genres',genres);
 app.use('/',home);

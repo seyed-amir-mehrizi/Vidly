@@ -14,12 +14,17 @@ const Customer = mongoose.model('Customer', mongoose.Schema({
 //Get Method 
 
 router.get('/', async (req, res) => {
-    let customers = await Customer.find().sort({ name: 1 });
+    let customers = await Customer.find().sort({ phone: 1 });
     res.send(customers);
 });
 
+//Get Method 
 
-//Put method
+router.get('/:field', async (req, res) => {
+    let customers = await Customer.find().sort(req.params.field);
+    res.send(customers);
+});
+//post method
 
 
 router.post('/', async (req, res) => {
@@ -47,6 +52,7 @@ router.post('/', async (req, res) => {
         console.log(error.message);
     }
 });
+
 
 
 

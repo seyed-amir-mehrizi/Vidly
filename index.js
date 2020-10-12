@@ -7,6 +7,7 @@ const genres = require('./routes/genres');
 const home = require('./routes/home');
 const customers = require('./routes/customers');
 const users = require('./routes/user');
+const auth = require('./routes/auth');
 mongoose.connect("mongodb://localhost/Vidly",{useUnifiedTopology:true,
 useUnifiedTopology:true , useNewUrlParser: true})
 .then(()=>{
@@ -22,6 +23,7 @@ app.use(cors())
 app.use('/api/genres',genres);
 app.use('/api/customers',customers);
 app.use('/api/users',users);
+app.use('/api/auth',auth);
 app.use('/',home);
 app.listen(5000, () => {
     console.log("app is listening to the port 5000....");

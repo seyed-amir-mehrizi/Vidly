@@ -1,33 +1,15 @@
-const _ = require('lodash');
 
+const {User , validateUser} = require('../models/user');
+const _ = require('lodash');
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-const Joi = require('joi');
 const bcrypt = require('bcrypt');
-
-
-const User = mongoose.model('User', mongoose.Schema({
-   
-    name: { type: String, required: true , minLength : 5 , maxLength : 250 },
-    email: { type: String, required: true , unique : true },
-    password: { type: String, required: true , minLength : 6 },
-
-}));
 
 
 
 //post method
-
-
 router.post('/', async (req, res) => {
-    const schema = Joi.object().keys({
-        name: Joi.string().min(5).max(250).required(),
-        email: Joi.string().required().email(),
-        password: Joi.string().min(6)
-    });
-
-    const validation = schema.validate(req.body);
+    const validation = schema.validateUser(req.body);
     if (validation.error) {
         res.status(400).send(validation.error.details[0].message);
         return;

@@ -1,40 +1,21 @@
-
+const {Customer , ValidateCustomer} = require('../models/customer');
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Joi = require('joi');
-
-
-const Customer = mongoose.model('Customer', mongoose.Schema({
-    isGold: Boolean,
-    name: { type: String, required: true },
-    phone: { type: Number, required: true }
-}));
 
 //Get Method 
-
 router.get('/', async (req, res) => {
     let customers = await Customer.find().sort({ phone: 1 });
     res.send(customers);
 });
-
 //Get Method 
-
 router.get('/:field', async (req, res) => {
     let customers = await Customer.find().sort(req.params.field);
     res.send(customers);
 });
 //post method
-
-
 router.post('/', async (req, res) => {
-    const schema = Joi.object().keys({
-        name: Joi.string().min(3).required(),
-        phone: Joi.number().required(),
-        isGold: Joi.boolean().required()
-    });
-
-    const validation = schema.validate(req.body);
+    const validation = ValidateCustomer(req.body);
     if (validation.error) {
         res.status(400).send(validation.error.details[0].message);
         return;
@@ -52,21 +33,10 @@ router.post('/', async (req, res) => {
         console.log(error.message);
     }
 });
-
-
-
-
 //put method 
-
-
 router.put('/:id', async (req, res) => {
-    const schema = Joi.object().keys({
-        name: Joi.string().min(3).required(),
-        phone: Joi.number().required(),
-        isGold: Joi.boolean().required()
-    });
 
-    const validation = schema.validate(req.body.id);
+    const validation = ValidateCustomer(req.body);
     if (validation.error) {
         res.status(400).send(validation.error.details[0].message);
         return;
@@ -88,30 +58,21 @@ router.put('/:id', async (req, res) => {
         console.log(error.message);
     }
 });
-
-
 //Delete method
-
-
-router.delete('/:id' , async(req,res)=>{
+router.delete('/:id', async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id);
-    if(!customer){
+    if (!customer) {
         res.status(404).send("customer is noot found...")
     }
     res.send(customer);
 })
-
-
 // Get By Id
 
-router.get('/:id' , async(req,res)=>{
+router.get('/:id', async (req, res) => {
     const customer = await Customer.findById(req.params.id);
-    if(!customer){
+    if (!customer) {
         res.status(404).send("customer is noot found...")
     }
     res.send(customer);
 });
-
-
-
 module.exports = router;

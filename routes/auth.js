@@ -5,6 +5,9 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
+
+const jwt = require('jsonwebtoken');
+
 //post method
 router.post('/', async (req, res) => {
     const validation = validateAuth(req.body);
@@ -24,7 +27,9 @@ router.post('/', async (req, res) => {
             res.status(400).send("invalid email or password...");
             return;
         }
-        res.send(true)
+        
+        const token = jwt.sign({_id :user._id } , 'jwtPrivateKey');
+        res.send(token);
 
     } catch (error) {
         console.log(error.message);
